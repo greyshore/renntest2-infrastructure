@@ -5,6 +5,9 @@ orbs:
 version: 2.1
 
 parameters:
+  cohort_repo_base:
+    type: string
+    default: renntest2
   static_web_storage_account_name:
     type: string
     default: "strenntest2"
@@ -147,7 +150,7 @@ jobs:
           command: |
             terraform init -input=false \
             -backend-config="container_name=<< pipeline.parameters.backend_container_name >>" \
-            -backend-config="key=renn_test.tfstate"
+            -backend-config="key=renntest_2.tfstate"
             terraform destroy -var static_web_storage_account_name=<< pipeline.parameters.static_web_storage_account_name >> \
             -var resource_group_name=<< pipeline.parameters.resource_group_name >> \
             --auto-approve
@@ -161,8 +164,8 @@ jobs:
       - run:
           name: Archive Github repos
           command: |
-            python repos.py "$de_github_token" "<< pipeline.parameters.circleci_organization >>" "<< pipeline.parameters.resource_group_name >>-infrastructure"
-            python repos.py "$de_github_token" "<< pipeline.parameters.circleci_organization >>" "<< pipeline.parameters.resource_group_name >>-app"
+            python repos.py "$de_github_token" "<< pipeline.parameters.circleci_organization >>" "<< pipeline.parameters.cohort_repo_base >>-infrastructure"
+            python repos.py "$de_github_token" "<< pipeline.parameters.circleci_organization >>" "<< pipeline.parameters.cohort_repo_base >>-app"
       - slack/notify:
           event: fail
           template: basic_fail_1
